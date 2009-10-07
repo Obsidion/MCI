@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, MagicCardInfo!</string>
+    <string name="app_name">MagicCardInfo</string>
+<string name="title">MagicCards.info</string>
+<string name="menu_search">Search</string>
+</resources>
