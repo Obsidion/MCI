@@ -1,37 +1,39 @@
 require 'rubygems'
 require 'Hpricot'
 require 'open-uri'
-
-
+require 'Card'
 
 $MCI = 'http://magiccards.info'
 $query = '/query.php?cardname='
 
 $CardNameRegex = '<a.*>(.*)<\/a>'  
 
-
 def getCard(cardTable)
   # preset them
-  cardName = 'card_name'
-  imgUrl = 'img_url'
-  cardUrl = 'card_url'
-  cardType = 'card_type'
+  card = Card.new()
+  
+  card.cardName = 'card_name'
+  card.imgUrl = 'img_url'
+  card.cardUrl = 'card_url'
+  card.cardType = 'card_type'
+  card.extraInfo = []
+  card.rulings = []
   
   tmpStr = cardTable.at("/tr/td/img")[:src]
   if tmpStr
-    imgUrl = $MCI + tmpStr
+    card.imgUrl = $MCI + tmpStr
     tmpStr = nil
   end
   
   tmpStr = cardTable.at("/tr/td[2]/h1/a")[:href]
   if tmpStr
-    cardUrl = $MCI + tmpStr
+    card.cardUrl = $MCI + tmpStr
     tmpStr = nil
   end
   
   tmpStr = cardTable.at("/tr/td[2]/h1/a").innerText
   if tmpStr 
-    cardName = tmpStr
+    card.cardName = tmpStr
     tmpStr = nil
   end
   
@@ -47,7 +49,7 @@ def getCard(cardTable)
     lines = extras.to_s.split(/<br\s*\/?>/)
     
     if lines.length > 0
-      cardType = lines[0].gsub(/<.*?>/, "").strip()
+      card.cardType = lines[0].gsub(/<.*?>/, "").strip()
       
       #get extra info.. one per line
       for i in 1..(lines.length-1)
@@ -55,15 +57,36 @@ def getCard(cardTable)
         extraInfo.push(lines[i].gsub(/<.*?>/, "").strip())
       end
     end
+    card.extraInfo = extraInfo
   end
   
-  puts cardName
-  puts imgUrl
-  puts cardUrl
-  puts cardType
-  extraInfo.each do |ei|
-    puts ei
+  # get card rulings
+  rulings = cardTable.search("/tr/td[2]/p[2]/p")
+  rules = []
+  if rulings
+    if rulings.to_s.include? "Gatherer Card Rulings"
+      tmpRules = cardTable.search("/tr/td[2]/p[2]/ul/li")
+      
+      tmpRules.each do |r|
+        rules.push(r.to_s.gsub(/<.*?>/, "").strip())
+      end      
+    end
+    card.rulings = rules
   end
+  
+  # puts cardName
+  # puts imgUrl
+  # puts cardUrl
+  # puts cardType
+  # extraInfo.each do |ei|
+    # puts ei
+  # end
+  # rules.each do |r|
+    # puts r
+  # end
+  
+  puts card.to_json
+  
 end
 
 
@@ -73,6 +96,9 @@ if ARGV[0]
 else
   searchString = 'cliffs'
 end
+
+#replace spaces with %20
+searchString = searchString.gsub(" ", "%20")
 
 url = $MCI + $query + searchString
 doc = Hpricot(open(url))
@@ -112,7 +138,7 @@ else
     tableCount = elems.length - 1
   end
   
-  puts "going from #{currentTable} to #{tableCount}"
+  puts "Found more than 20 entries, returning only first 20:"
   
   while currentTable < tableCount
     getCard(elems[currentTable])
