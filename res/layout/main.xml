@@ -4,17 +4,32 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
 	android:gravity="center" >
-<ImageView
-	android:id="@+id/logo" 
-	android:layout_width="wrap_content"
-	android:layout_height="wrap_content"
-	android:gravity="center" 
-	android:src="@drawable/mci_logo" />
-<TextView  
-    android:layout_width="wrap_content" 
-    android:layout_height="wrap_content" 
-    android:gravity="center"
-    android:text="@string/title"
-    android:padding="20px"
-    />
+	<ImageView
+		android:id="@+id/logo" 
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:gravity="center" 
+		android:src="@drawable/mci_logo" />
+	<TableLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:stretchColumns="2" 
+	    android:padding="20px" >	
+		<TableRow
+			android:gravity="center">
+			<EditText
+				android:id="@+id/search_box"
+				android:hint="@string/search_hint"
+				android:textSize="18sp" />
+			<Button
+				android:id="@+id/go_search"
+				android:text="@string/search_button"
+				android:textSize="12sp" />
+		</TableRow>
+	</TableLayout>	
+	<TextView  
+	    android:layout_width="wrap_content" 
+	    android:layout_height="wrap_content" 
+	    android:gravity="center"
+	    android:text="@string/title"/>
 </LinearLayout>

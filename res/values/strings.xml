@@ -4,4 +4,6 @@
     <string name="app_name">MagicCardInfo</string>
 <string name="title">MagicCards.info</string>
 <string name="menu_search">Search</string>
+<string name="search_hint">Card name...</string>
+<string name="search_button">Go!</string>
 </resources>
